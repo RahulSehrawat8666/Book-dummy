@@ -18,6 +18,7 @@ public class BookRatingServiceImpl {
 	@Autowired
 	private BookRatingDAO bookRatingDAO;
 
+	
 	public Collection<BookRating> getBookRatingDetails() {
 		Collection<BookRatingEntity> collec = bookRatingDAO.findAll();
 		List<BookRating> listBookRating = new ArrayList<BookRating>();
@@ -46,6 +47,7 @@ public class BookRatingServiceImpl {
 		return null;
 }
 
+	
 	public BookRating updateBookRatingDetails(BookRating bookRating) {
 		BookRatingEntity bookRatingEntity = new BookRatingEntity();
 		Gson gson = new Gson();
@@ -57,20 +59,44 @@ public class BookRatingServiceImpl {
 		}
 		return null;
 	}
+	
+	
 
-	public void deleteBookRatingDetails(int bookId) {
+	/*public void deleteBookRatingDetails(int bookId) {
 		BookUserIdEntity bookUserIdEntity = new BookUserIdEntity();
 		bookUserIdEntity.setBookId(bookId);
 		bookRatingDAO.deleteByBookUserId_BookId(bookId);
 
-	}
+	}*/
+	
+	public int deleteBookRatingDetails(int bookId) {
+		BookUserIdEntity bookUserIdEntity = new BookUserIdEntity();
+		bookUserIdEntity.setBookId(bookId);
+		Optional<BookRatingEntity> bookRatingEntity = bookRatingDAO.findByBookUserId_BookId(bookId);
+		if (bookRatingEntity.isPresent()) {
+		bookRatingDAO.deleteByBookUserId_BookId(bookId);
+		return bookId;
+		}
+		  
+		return -1;
+	}   
 
-	public int addBookRating(BookRating bookRating) {
+	/*public int addBookRating(BookRating bookRating) {
 		BookRatingEntity bookRatingEntity = new BookRatingEntity();
 		Gson gson = new Gson();
 		bookRatingEntity = gson.fromJson(gson.toJson(bookRating), BookRatingEntity.class);
 		BookRatingEntity bookrateentity = bookRatingDAO.save(bookRatingEntity);
 		return bookrateentity.getRating();
+	}*/
+	
+	public BookRating addBookRating(BookRating bookRating) {
+		BookRatingEntity bookRatingEntity = new BookRatingEntity();
+		Gson gson = new Gson();
+		bookRatingEntity = gson.fromJson(gson.toJson(bookRating), BookRatingEntity.class);
+		BookRatingEntity bookrateentity = bookRatingDAO.save(bookRatingEntity);
+		if(bookrateentity !=null) {
+		return gson.fromJson(gson.toJson(bookrateentity), BookRating.class);}
+		return null;
 	}
 
 }
